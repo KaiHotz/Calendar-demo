@@ -15,7 +15,7 @@ export const CalendarHeader: FC<ICalendarHeaderProps> = ({ onChangeView, view, d
     return (
         <div className="bg-white border-b p-4 flex items-center justify-between">
             <div className="flex items-center gap-1 w-1/3 justify-start">
-                <h1 className="text-2xl font-bold text-gray-800">{dates}</h1>
+                <h1 className="text-xl font-bold text-gray-800">{dates}</h1>
             </div>
             <div className="flex gap-2 w-1/3 justify-center">
                 <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded">
