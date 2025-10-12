@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "check-types": "tsc --noEmit true",
     "eslint:fix": "eslint . --fix",
     "eslint": "eslint . --report-unused-disable-directives",
