@@ -17,4 +17,8 @@ export interface IResizingEventState {
     dayDate: Date;
 }
 
-export type TViewType = 'day' | 'week' | 'month';
+export enum EViewType {
+    DAY = 'day',
+    WEEK = 'week',
+    MONTH = 'month',
+}

@@ -8,7 +8,6 @@ import {
     endOfDay,
     endOfMonth,
     format,
-    setHours,
     startOfDay,
     startOfMonth,
     startOfWeek,
@@ -16,7 +15,9 @@ import {
 
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarEvent } from './CalendarEvent';
-import type { ICalendarEvent, IDraggedEventState, IResizingEventState, TViewType } from './types';
+import { MonthView } from './MonthView';
+import type { ICalendarEvent, IDraggedEventState, IResizingEventState } from './types';
+import { EViewType } from './types';
 
 interface CalendarProps {
     events: ICalendarEvent[];
@@ -24,7 +25,7 @@ interface CalendarProps {
 }
 
 export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
-    const [view, setView] = useState<TViewType>('week');
+    const [view, setView] = useState<EViewType>(EViewType.WEEK);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const [resizingEvent, setResizingEvent] = useState<IResizingEventState | null>(null);
     const [draggedEvent, setDraggedEvent] = useState<IDraggedEventState | null>(null);
@@ -32,9 +33,9 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
     const hours: number[] = Array.from({ length: 24 }, (_, i) => i);
 
     const viewDates = useMemo<Date[]>(() => {
-        if (view === 'day') {
+        if (view === EViewType.DAY) {
             return [currentDate];
-        } else if (view === 'week') {
+        } else if (view === EViewType.WEEK) {
             const start = startOfWeek(currentDate);
 
             return Array.from({ length: 7 }, (_, i) => addDays(start, i));
@@ -50,13 +51,13 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
 
     const navigate = (direction: number): void => {
         switch (view) {
-            case 'day':
+            case EViewType.DAY:
                 setCurrentDate(addDays(currentDate, direction));
                 break;
-            case 'week':
+            case EViewType.WEEK:
                 setCurrentDate(addWeeks(currentDate, direction));
                 break;
-            case 'month':
+            case EViewType.MONTH:
                 setCurrentDate(addMonths(currentDate, direction));
                 break;
             default:
@@ -76,8 +77,10 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
     };
 
     const addEvent = (date: Date, hour: number): void => {
-        const start = setHours(date, hour);
-        const end = setHours(start, hour + 1);
+        const start = new Date(date);
+        start.setHours(hour, 0, 0, 0);
+        const end = new Date(start);
+        end.setHours(hour + 1, 0, 0, 0);
 
         const newEvent: ICalendarEvent = {
             id: new Date().getTime().toString(),
@@ -154,9 +157,9 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
         <div className="flex flex-col h-screen bg-gray-50">
             <CalendarHeader
                 dates={
-                    view === 'day'
+                    view === EViewType.DAY
                         ? format(currentDate, 'EEEE, MMMM d, yyyy')
-                        : view === 'month'
+                        : view === EViewType.MONTH
                           ? format(currentDate, 'MMMM yyyy')
                           : `${format(viewDates[0], 'MMM d')} - ${format(viewDates[6], 'MMM d, yyyy')}`
                 }
@@ -166,59 +169,71 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                 onClickToday={setCurrentDate}
             />
 
-            <div className="flex-1 overflow-hidden flex flex-col">
-                <div className="bg-white border-b">
-                    <div className="flex">
-                        <div className="w-20 flex-shrink-0" />
-                        {viewDates.map((date, idx) => (
-                            <div key={idx} className="flex-1 text-center py-3 border-l text-white bg-teal-500">
-                                <div className="text-xs font-medium">{format(date, 'EEE')}</div>
-                                <div className="text-sm font-semibold">{format(date, 'dd.MM')}</div>
-                            </div>
-                        ))}
+            {view === 'month' ? (
+                <MonthView
+                    currentDate={currentDate}
+                    viewDates={viewDates}
+                    setView={setView}
+                    setCurrentDate={setCurrentDate}
+                    getEventsForDay={getEventsForDay}
+                />
+            ) : (
+                <div className="flex-1 overflow-hidden flex flex-col">
+                    <div className="bg-white border-b">
+                        <div className="flex">
+                            <div className="w-20 flex-shrink-0" />
+                            {viewDates.map((date, idx) => (
+                                <div key={idx} className="flex-1 text-center py-3 border-l text-white bg-teal-500">
+                                    <div className="text-xs font-medium">{format(date, 'EEE')}</div>
+                                    <div className="text-sm font-semibold">{format(date, 'dd.MM')}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-                <div className="flex-1 overflow-auto">
-                    <div className="flex">
-                        <div className="w-20 flex-shrink-0 border-r bg-gray-50">
-                            {hours.map((hour) => (
-                                <div key={hour} className="h-16 border-b flex items-start justify-end pr-2 pt-1">
-                                    <span className="text-xs text-gray-500">{String(hour).padStart(2, '0')}:00</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div
-                            className="flex-1 flex relative"
-                            onMouseMove={handleMouseMove}
-                            onMouseUp={handleMouseUp}
-                            onMouseLeave={handleMouseUp}
-                        >
-                            {viewDates.map((date, dayIdx) => (
-                                <div key={dayIdx} className="flex-1 border-r relative">
-                                    {hours.map((hour) => (
-                                        <div
-                                            key={hour}
-                                            className="h-16 border-b cursor-pointer hover:bg-teal-500/10"
-                                            onClick={() => addEvent(date, hour)}
-                                        />
-                                    ))}
-                                    {getEventsForDay(date).map((event) => (
-                                        <CalendarEvent
-                                            key={event.id}
-                                            event={event}
-                                            dayDate={date}
-                                            onDelete={deleteEvent}
-                                            onResize={setResizingEvent}
-                                            onDrag={setDraggedEvent}
-                                        />
-                                    ))}
-                                </div>
-                            ))}
+                    <div className="flex-1 overflow-auto">
+                        <div className="flex">
+                            <div className="w-20 flex-shrink-0 border-r bg-gray-50">
+                                {hours.map((hour) => (
+                                    <div key={hour} className="h-16 border-b flex items-start justify-end pr-2 pt-1">
+                                        <span className="text-xs text-gray-500">
+                                            {String(hour).padStart(2, '0')}:00
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div
+                                className="flex-1 flex relative"
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={handleMouseUp}
+                                onMouseLeave={handleMouseUp}
+                            >
+                                {viewDates.map((date, dayIdx) => (
+                                    <div key={dayIdx} className="flex-1 border-r relative">
+                                        {hours.map((hour) => (
+                                            <div
+                                                key={hour}
+                                                className="h-16 border-b cursor-pointer hover:bg-teal-500/10"
+                                                onClick={() => addEvent(date, hour)}
+                                            />
+                                        ))}
+                                        {getEventsForDay(date).map((event) => (
+                                            <CalendarEvent
+                                                key={event.id}
+                                                event={event}
+                                                dayDate={date}
+                                                onDelete={deleteEvent}
+                                                onResize={setResizingEvent}
+                                                onDrag={setDraggedEvent}
+                                            />
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

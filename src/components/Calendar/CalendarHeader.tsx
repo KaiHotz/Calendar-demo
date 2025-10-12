@@ -1,12 +1,12 @@
 import { type FC } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import type { TViewType } from './types';
+import { EViewType } from './types';
 
 interface ICalendarHeaderProps {
     dates: string;
-    view: TViewType;
-    onChangeView: (view: TViewType) => void;
+    view: EViewType;
+    onChangeView: (view: EViewType) => void;
     navigate: (direction: number) => void;
     onClickToday: (date: Date) => void;
 }
@@ -33,20 +33,20 @@ export const CalendarHeader: FC<ICalendarHeaderProps> = ({ onChangeView, view, d
             </div>
             <div className="flex gap-2">
                 <button
-                    onClick={() => onChangeView('day')}
-                    className={`px-4 py-2 rounded ${view === 'day' ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+                    onClick={() => onChangeView(EViewType.DAY)}
+                    className={`px-4 py-2 rounded ${view === EViewType.DAY ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
                 >
                     Day
                 </button>
                 <button
-                    onClick={() => onChangeView('week')}
-                    className={`px-4 py-2 rounded ${view === 'week' ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+                    onClick={() => onChangeView(EViewType.WEEK)}
+                    className={`px-4 py-2 rounded ${view === EViewType.WEEK ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
                 >
                     Week
                 </button>
                 <button
-                    onClick={() => onChangeView('month')}
-                    className={`px-4 py-2 rounded ${view === 'month' ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+                    onClick={() => onChangeView(EViewType.MONTH)}
+                    className={`px-4 py-2 rounded ${view === EViewType.MONTH ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
                 >
                     Month
                 </button>
