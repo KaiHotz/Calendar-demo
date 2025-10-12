@@ -1,4 +1,5 @@
-import { type Dispatch, type FC, type MouseEvent, type SetStateAction } from 'react';
+import { useCallback } from 'react';
+import type { Dispatch, FC, MouseEvent, SetStateAction, TouchEvent } from 'react';
 import { endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { StretchHorizontal, Trash2 } from 'lucide-react';
 
@@ -45,51 +46,80 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
     const isMultiDay = !isSameDay(eventStart, eventEnd);
     const isLastDay = isSameDay(dayDate, eventEnd);
 
-    const handleDrag = (e: MouseEvent<HTMLDivElement>): void => {
-        e.preventDefault();
-        e.stopPropagation();
-        onDrag({ event, dayDate, offsetY: e.nativeEvent.offsetY });
-    };
+    const handleDrag = useCallback(
+        (e: MouseEvent<HTMLDivElement>): void => {
+            e.preventDefault();
+            e.stopPropagation();
+            onDrag({ event, dayDate, offsetY: e.nativeEvent.offsetY });
+        },
+        [dayDate, event, onDrag],
+    );
 
-    const handleResize = (e: MouseEvent<HTMLDivElement>): void => {
-        e.preventDefault();
-        e.stopPropagation();
-        onResize({ event, dayDate });
-    };
+    const handleTouchStart = useCallback(
+        (e: TouchEvent<HTMLDivElement>): void => {
+            e.preventDefault();
+            e.stopPropagation();
+            const touch = e.touches[0];
+            const rect = (e.target as HTMLElement).getBoundingClientRect();
+            const offsetY = touch.clientY - rect.top;
+            onDrag({ event, dayDate, offsetY });
+        },
+        [dayDate, event, onDrag],
+    );
+
+    const handleResize = useCallback(
+        (e: MouseEvent<HTMLDivElement>): void => {
+            e.preventDefault();
+            e.stopPropagation();
+            onResize({ event, dayDate });
+        },
+        [dayDate, event, onResize],
+    );
+
+    const handleResizeTouchStart = useCallback(
+        (e: TouchEvent<HTMLDivElement>): void => {
+            e.preventDefault();
+            e.stopPropagation();
+            onResize({ event, dayDate });
+        },
+        [dayDate, event, onResize],
+    );
 
     return (
         <div
-            className="absolute rounded px-2 py-1 text-xs text-white overflow-hidden cursor-move group opacity-90"
+            className="absolute rounded px-1 md:px-2 py-1 text-xs text-white overflow-hidden cursor-move group opacity-90"
             style={{
                 top: `${top}%`,
                 height: `${height}%`,
                 left: `${left}%`,
                 width: `${width}%`,
                 backgroundColor: event.color,
-                minHeight: '20px',
+                minHeight: '16px',
                 zIndex: 10,
             }}
             onMouseDown={handleDrag}
+            onTouchStart={handleTouchStart}
         >
-            <div className="font-semibold truncate">{event.title}</div>
-            <div className="text-[10px] opacity-90">
+            <div className="font-semibold truncate text-xs md:text-sm">{event.title}</div>
+            <div className="text-[9px] md:text-[10px] opacity-90">
                 {format(displayStart, 'HH:mm')} - {format(displayEnd, 'HH:mm')}
             </div>
             <button
-                className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-red-500 rounded p-0.5 cursor-pointer"
+                className="absolute top-0.5 md:top-1 right-0.5 md:right-1 opacity-0 group-hover:opacity-100 bg-red-500 rounded p-0.5 cursor-pointer"
                 onClick={(e) => {
                     e.stopPropagation();
                     onDelete(event.id);
                 }}
             >
-                <Trash2 size={10} />
+                <Trash2 size={8} className="md:w-[10px] md:h-[10px]" />
             </button>
             {(!isMultiDay || isLastDay) && (
                 <div
-                    className="absolute bottom-0 left-0 right-0 flex justify-center h-2 cursor-ns-resize hover:bg-gray-400/80 "
+                    className="absolute bottom-0 left-0 right-0 flex justify-center h-1.5 md:h-2 cursor-ns-resize hover:bg-gray-400/80 "
                     onMouseDown={handleResize}
+                    onTouchStart={handleResizeTouchStart}
                 >
-                    <StretchHorizontal size={8} />
+                    <StretchHorizontal size={6} className="md:w-2 md:h-2" />
                 </div>
             )}
         </div>
