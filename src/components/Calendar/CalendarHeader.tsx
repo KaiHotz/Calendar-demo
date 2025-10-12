@@ -14,24 +14,24 @@ interface ICalendarHeaderProps {
 export const CalendarHeader: FC<ICalendarHeaderProps> = ({ onChangeView, view, dates, navigate, onClickToday }) => {
     return (
         <div className="bg-white border-b p-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 w-1/3 justify-start">
                 <h1 className="text-2xl font-bold text-gray-800">{dates}</h1>
-                <div className="flex gap-2">
-                    <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded">
-                        <ChevronLeft size={20} />
-                    </button>
-                    <button
-                        onClick={() => onClickToday(new Date())}
-                        className="px-3 py-2 hover:bg-gray-100 rounded text-sm"
-                    >
-                        Today
-                    </button>
-                    <button onClick={() => navigate(1)} className="p-2 hover:bg-gray-100 rounded">
-                        <ChevronRight size={20} />
-                    </button>
-                </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-1/3 justify-center">
+                <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded">
+                    <ChevronLeft size={20} />
+                </button>
+                <button
+                    onClick={() => onClickToday(new Date())}
+                    className="px-3 py-2 hover:bg-gray-100 rounded text-sm"
+                >
+                    Today
+                </button>
+                <button onClick={() => navigate(1)} className="p-2 hover:bg-gray-100 rounded">
+                    <ChevronRight size={20} />
+                </button>
+            </div>
+            <div className="flex gap-2 w-1/3 justify-end">
                 <button
                     onClick={() => onChangeView(EViewType.DAY)}
                     className={`px-4 py-2 rounded ${view === EViewType.DAY ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}

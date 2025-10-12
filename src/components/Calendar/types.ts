@@ -17,6 +17,12 @@ export interface IResizingEventState {
     dayDate: Date;
 }
 
+export interface IEventLayout {
+    event: ICalendarEvent;
+    column: number;
+    totalColumns: number;
+}
+
 export enum EViewType {
     DAY = 'day',
     WEEK = 'week',

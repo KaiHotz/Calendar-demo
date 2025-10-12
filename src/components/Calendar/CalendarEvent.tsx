@@ -10,9 +10,19 @@ interface ICalendarEventProps {
     onDelete: (id: string) => void;
     onResize: Dispatch<SetStateAction<IResizingEventState | null>>;
     onDrag: Dispatch<SetStateAction<IDraggedEventState | null>>;
+    column?: number;
+    totalColumns?: number;
 }
 
-export const CalendarEvent: FC<ICalendarEventProps> = ({ event, dayDate, onDelete, onResize, onDrag }) => {
+export const CalendarEvent: FC<ICalendarEventProps> = ({
+    event,
+    dayDate,
+    onDelete,
+    onResize,
+    onDrag,
+    column = 0,
+    totalColumns = 1,
+}) => {
     const eventStart = new Date(event.start);
     const eventEnd = new Date(event.end);
 
@@ -27,6 +37,10 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({ event, dayDate, onDelet
 
     const top = (startHour / 24) * 100;
     const height = ((endHour - startHour) / 24) * 100;
+
+    // Calculate horizontal positioning for overlapping events
+    const width = totalColumns > 1 ? 100 / totalColumns - 1 : 100 / totalColumns; // Subtract 1% for spacing
+    const left = column * (100 / totalColumns) + (column > 0 ? 0.5 : 0); // Add small offset for spacing
 
     const isMultiDay = !isSameDay(eventStart, eventEnd);
     const isLastDay = isSameDay(dayDate, eventEnd);
@@ -45,10 +59,12 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({ event, dayDate, onDelet
 
     return (
         <div
-            className="absolute left-0 right-0  rounded px-2 py-1 text-xs text-white overflow-hidden cursor-move group opacity-90"
+            className="absolute rounded px-2 py-1 text-xs text-white overflow-hidden cursor-move group opacity-90"
             style={{
                 top: `${top}%`,
                 height: `${height}%`,
+                left: `${left}%`,
+                width: `${width}%`,
                 backgroundColor: event.color,
                 minHeight: '20px',
                 zIndex: 10,

@@ -18,6 +18,7 @@ import { CalendarEvent } from './CalendarEvent';
 import { MonthView } from './MonthView';
 import type { ICalendarEvent, IDraggedEventState, IResizingEventState } from './types';
 import { EViewType } from './types';
+import { calculateEventLayout } from './utils';
 
 interface CalendarProps {
     events: ICalendarEvent[];
@@ -217,16 +218,23 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                                 onClick={() => addEvent(date, hour)}
                                             />
                                         ))}
-                                        {getEventsForDay(date).map((event) => (
-                                            <CalendarEvent
-                                                key={event.id}
-                                                event={event}
-                                                dayDate={date}
-                                                onDelete={deleteEvent}
-                                                onResize={setResizingEvent}
-                                                onDrag={setDraggedEvent}
-                                            />
-                                        ))}
+                                        {(() => {
+                                            const dayEvents = getEventsForDay(date);
+                                            const eventLayouts = calculateEventLayout(dayEvents);
+
+                                            return eventLayouts.map((layout) => (
+                                                <CalendarEvent
+                                                    key={layout.event.id}
+                                                    event={layout.event}
+                                                    dayDate={date}
+                                                    onDelete={deleteEvent}
+                                                    onResize={setResizingEvent}
+                                                    onDrag={setDraggedEvent}
+                                                    column={layout.column}
+                                                    totalColumns={layout.totalColumns}
+                                                />
+                                            ));
+                                        })()}
                                     </div>
                                 ))}
                             </div>
