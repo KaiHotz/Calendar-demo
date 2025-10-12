@@ -182,7 +182,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
     return (
         <div className="flex flex-col h-screen bg-gray-50">
             <CalendarHeader
-                dates={
+                title={
                     view === EViewType.DAY
                         ? format(currentDate, 'EEEE, MMMM d, yyyy')
                         : view === EViewType.MONTH
