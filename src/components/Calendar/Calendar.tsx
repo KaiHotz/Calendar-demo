@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { Dispatch, FC, MouseEvent, SetStateAction, TouchEvent } from 'react';
+import type { Dispatch, FC, MouseEvent, SetStateAction } from 'react';
 import {
     addDays,
     addMonths,
@@ -121,13 +121,13 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
     );
 
     const handleMove = useCallback(
-        (e: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>): void => {
+        (e: MouseEvent<HTMLDivElement>): void => {
             if (!draggedEvent && !resizingEvent) return;
 
             const target = e.currentTarget;
             const rect = target.getBoundingClientRect();
-            const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            const y = e.clientY - rect.top;
+            const clientX = e.clientX;
             const hourHeight = rect.height / 24;
             const newHour = Math.floor(y / hourHeight);
             const minutes = Math.floor(((y % hourHeight) / hourHeight) * 60);
@@ -239,8 +239,6 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                 onMouseMove={handleMove}
                                 onMouseUp={handleMouseUp}
                                 onMouseLeave={handleMouseUp}
-                                onTouchMove={handleMove}
-                                onTouchEnd={handleMouseUp}
                             >
                                 {viewDates.map((date, dayIdx) => (
                                     <div

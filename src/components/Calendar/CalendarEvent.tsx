@@ -54,17 +54,6 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
         [dayDate, event, onDrag],
     );
 
-    const handleTouchStart = useCallback(
-        (e: TouchEvent<HTMLDivElement>): void => {
-            e.stopPropagation();
-            const touch = e.touches[0];
-            const rect = (e.target as HTMLElement).getBoundingClientRect();
-            const offsetY = touch.clientY - rect.top;
-            onDrag({ event, dayDate, offsetY });
-        },
-        [dayDate, event, onDrag],
-    );
-
     const handleResize = useCallback(
         (e: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>): void => {
             e.stopPropagation();
@@ -86,7 +75,6 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
                 zIndex: 10,
             }}
             onMouseDown={handleDrag}
-            onTouchStart={handleTouchStart}
         >
             <div className="font-semibold truncate text-xs md:text-sm">{event.title}</div>
             <div className="text-[9px] md:text-[10px] opacity-90">
