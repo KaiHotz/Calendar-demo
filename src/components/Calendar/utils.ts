@@ -33,44 +33,77 @@ export const calculateEventLayout = (events: ICalendarEvent[]): IEventLayout[] =
     });
 
     const layout: IEventLayout[] = [];
-    const columns: ICalendarEvent[][] = [];
+    const processedEvents = new Set<string>();
 
+    // Process each event and find its overlapping group
     for (const event of sortedEvents) {
-        let columnIndex = 0;
+        if (processedEvents.has(event.id)) continue;
 
-        // Find the first column where this event doesn't overlap with any existing event
-        while (columnIndex < columns.length) {
-            const hasOverlap = columns[columnIndex].some((existingEvent) => eventsOverlap(event, existingEvent));
+        // Find all events that overlap with this event
+        const overlappingGroup = [event];
+        for (const otherEvent of sortedEvents) {
+            if (otherEvent.id !== event.id && !processedEvents.has(otherEvent.id)) {
+                // Check if otherEvent overlaps with any event in the current group
+                const overlapsWithGroup = overlappingGroup.some((groupEvent) => eventsOverlap(groupEvent, otherEvent));
 
-            if (!hasOverlap) {
-                break;
+                if (overlapsWithGroup) {
+                    overlappingGroup.push(otherEvent);
+                }
             }
-            columnIndex++;
         }
 
-        // If we need a new column, create it
-        if (columnIndex === columns.length) {
-            columns.push([]);
+        // If there's only one event in the group, it doesn't overlap with anything
+        if (overlappingGroup.length === 1) {
+            layout.push({
+                event,
+                column: 0,
+                totalColumns: 1,
+            });
+            processedEvents.add(event.id);
+            continue;
         }
 
-        // Add event to the column
-        columns[columnIndex].push(event);
+        // For overlapping events, assign columns
+        const columns: ICalendarEvent[][] = [];
 
-        layout.push({
-            event,
-            column: columnIndex,
-            totalColumns: Math.max(
-                columns.length,
-                layout.reduce((max, item) => Math.max(max, item.totalColumns), 1),
-            ),
+        for (const groupEvent of overlappingGroup) {
+            let columnIndex = 0;
+
+            // Find the first column where this event doesn't overlap with any existing event
+            while (columnIndex < columns.length) {
+                const hasOverlap = columns[columnIndex].some((existingEvent) => eventsOverlap(groupEvent, existingEvent));
+
+                if (!hasOverlap) {
+                    break;
+                }
+                columnIndex++;
+            }
+
+            // If we need a new column, create it
+            if (columnIndex === columns.length) {
+                columns.push([]);
+            }
+
+            // Add event to the column
+            columns[columnIndex].push(groupEvent);
+
+            layout.push({
+                event: groupEvent,
+                column: columnIndex,
+                totalColumns: columns.length,
+            });
+
+            processedEvents.add(groupEvent.id);
+        }
+
+        // Update totalColumns for all events in this overlapping group
+        const groupTotalColumns = columns.length;
+        layout.forEach((item) => {
+            if (overlappingGroup.some((groupEvent) => groupEvent.id === item.event.id)) {
+                item.totalColumns = groupTotalColumns;
+            }
         });
     }
 
-    // Update totalColumns for all events to reflect the final number of columns
-    const finalTotalColumns = columns.length;
-
-    return layout.map((item) => ({
-        ...item,
-        totalColumns: finalTotalColumns,
-    }));
+    return layout;
 };

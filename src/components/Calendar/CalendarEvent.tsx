@@ -86,7 +86,7 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
             </button>
             {(!isMultiDay || isLastDay) && (
                 <div
-                    className="absolute bottom-0 left-0 right-0 flex justify-center h-2 cursor-ns-resize hover:bg-sky-700 "
+                    className="absolute bottom-0 left-0 right-0 flex justify-center h-2 cursor-ns-resize hover:bg-gray-400/80 "
                     onMouseDown={handleResize}
                 >
                     <StretchHorizontal size={8} />
