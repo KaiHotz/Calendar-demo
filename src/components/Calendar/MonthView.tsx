@@ -19,7 +19,12 @@ export const MonthView: FC<IMonthviewProps> = ({
     setView,
     setCurrentDate,
 }) => {
-    const weeks = useMemo(() => Array.from({ length: 5 }, (_, i) => viewDates.slice(i * 7, i * 7 + 7)), [viewDates]);
+    // Split viewDates into weeks
+    const weeks = useMemo(() => {
+        const numberOfWeeks = Math.ceil(viewDates.length / 7);
+
+        return Array.from({ length: numberOfWeeks }, (_, i) => viewDates.slice(i * 7, i * 7 + 7));
+    }, [viewDates]);
 
     return (
         <div className="flex-1 overflow-auto p-1 md:p-2">
