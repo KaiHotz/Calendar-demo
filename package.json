@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "check-types": "tsc -b",
+    "check-types": "tsc --noEmit true",
     "eslint:fix": "eslint . --fix",
     "eslint": "eslint . --report-unused-disable-directives",
     "test": "vitest",
