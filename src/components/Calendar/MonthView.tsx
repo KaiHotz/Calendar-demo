@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { format, isSameDay } from 'date-fns';
 
 import type { ICalendarEvent } from './types';
@@ -19,10 +19,7 @@ export const MonthView: FC<IMonthviewProps> = ({
     setView,
     setCurrentDate,
 }) => {
-    const weeks: Date[][] = [];
-    for (let i = 0; i < viewDates.length; i += 7) {
-        weeks.push(viewDates.slice(i, i + 7));
-    }
+    const weeks = useMemo(() => Array.from({ length: 5 }, (_, i) => viewDates.slice(i * 7, i * 7 + 7)), [viewDates]);
 
     return (
         <div className="flex-1 overflow-auto p-1 md:p-2">

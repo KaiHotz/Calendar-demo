@@ -48,7 +48,6 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
 
     const handleDrag = useCallback(
         (e: MouseEvent<HTMLDivElement>): void => {
-            e.preventDefault();
             e.stopPropagation();
             onDrag({ event, dayDate, offsetY: e.nativeEvent.offsetY });
         },
@@ -57,7 +56,6 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
 
     const handleTouchStart = useCallback(
         (e: TouchEvent<HTMLDivElement>): void => {
-            e.preventDefault();
             e.stopPropagation();
             const touch = e.touches[0];
             const rect = (e.target as HTMLElement).getBoundingClientRect();
@@ -68,17 +66,7 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
     );
 
     const handleResize = useCallback(
-        (e: MouseEvent<HTMLDivElement>): void => {
-            e.preventDefault();
-            e.stopPropagation();
-            onResize({ event, dayDate });
-        },
-        [dayDate, event, onResize],
-    );
-
-    const handleResizeTouchStart = useCallback(
-        (e: TouchEvent<HTMLDivElement>): void => {
-            e.preventDefault();
+        (e: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>): void => {
             e.stopPropagation();
             onResize({ event, dayDate });
         },
@@ -117,7 +105,7 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
                 <div
                     className="absolute bottom-0 left-0 right-0 flex justify-center h-1.5 md:h-2 cursor-ns-resize hover:bg-gray-400/80 "
                     onMouseDown={handleResize}
-                    onTouchStart={handleResizeTouchStart}
+                    onTouchStart={handleResize}
                 >
                     <StretchHorizontal size={6} className="md:w-2 md:h-2" />
                 </div>

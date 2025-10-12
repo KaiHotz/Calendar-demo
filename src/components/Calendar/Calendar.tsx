@@ -120,13 +120,14 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
         [events, onEventsChange],
     );
 
-    const handleMouseMove = useCallback(
-        (e: MouseEvent<HTMLDivElement>): void => {
+    const handleMove = useCallback(
+        (e: MouseEvent<HTMLDivElement> | TouchEvent<HTMLDivElement>): void => {
             if (!draggedEvent && !resizingEvent) return;
 
             const target = e.currentTarget;
             const rect = target.getBoundingClientRect();
-            const y = e.clientY - rect.top;
+            const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
             const hourHeight = rect.height / 24;
             const newHour = Math.floor(y / hourHeight);
             const minutes = Math.floor(((y % hourHeight) / hourHeight) * 60);
@@ -137,7 +138,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                 const end = new Date(event.end);
                 const duration = differenceInMinutes(end, start);
 
-                const targetDate = viewDates[Math.floor((e.clientX - rect.left) / (rect.width / viewDates.length))];
+                const targetDate = viewDates[Math.floor((clientX - rect.left) / (rect.width / viewDates.length))];
                 if (!targetDate) return;
 
                 const newStart = new Date(targetDate);
@@ -152,58 +153,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
 
             if (resizingEvent) {
                 const event = resizingEvent.event;
-                const targetDate = viewDates[Math.floor((e.clientX - rect.left) / (rect.width / viewDates.length))];
-                if (!targetDate) return;
-
-                const newEnd = new Date(targetDate);
-                newEnd.setHours(Math.max(0, Math.min(23, newHour)), Math.min(59, minutes + 30), 0, 0);
-
-                const start = new Date(event.start);
-                if (newEnd > start) {
-                    const updatedEvents = events.map((ev) =>
-                        ev.id === event.id ? { ...ev, end: newEnd.toISOString() } : ev,
-                    );
-                    onEventsChange(updatedEvents);
-                }
-            }
-        },
-        [draggedEvent, events, onEventsChange, resizingEvent, viewDates],
-    );
-
-    const handleTouchMove = useCallback(
-        (e: TouchEvent<HTMLDivElement>): void => {
-            if (!draggedEvent && !resizingEvent) return;
-
-            const target = e.currentTarget;
-            const rect = target.getBoundingClientRect();
-            const touch = e.touches[0];
-            const y = touch.clientY - rect.top;
-            const hourHeight = rect.height / 24;
-            const newHour = Math.floor(y / hourHeight);
-            const minutes = Math.floor(((y % hourHeight) / hourHeight) * 60);
-
-            if (draggedEvent) {
-                const event = draggedEvent.event;
-                const start = new Date(event.start);
-                const end = new Date(event.end);
-                const duration = differenceInMinutes(end, start);
-
-                const targetDate = viewDates[Math.floor((touch.clientX - rect.left) / (rect.width / viewDates.length))];
-                if (!targetDate) return;
-
-                const newStart = new Date(targetDate);
-                newStart.setHours(Math.max(0, Math.min(23, newHour)), minutes, 0, 0);
-                const newEnd = new Date(newStart.getTime() + duration * 60000);
-
-                const updatedEvents = events.map((ev) =>
-                    ev.id === event.id ? { ...ev, start: newStart.toISOString(), end: newEnd.toISOString() } : ev,
-                );
-                onEventsChange(updatedEvents);
-            }
-
-            if (resizingEvent) {
-                const event = resizingEvent.event;
-                const targetDate = viewDates[Math.floor((touch.clientX - rect.left) / (rect.width / viewDates.length))];
+                const targetDate = viewDates[Math.floor((clientX - rect.left) / (rect.width / viewDates.length))];
                 if (!targetDate) return;
 
                 const newEnd = new Date(targetDate);
@@ -286,10 +236,10 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                             </div>
                             <div
                                 className="flex-1 flex relative"
-                                onMouseMove={handleMouseMove}
+                                onMouseMove={handleMove}
                                 onMouseUp={handleMouseUp}
                                 onMouseLeave={handleMouseUp}
-                                onTouchMove={handleTouchMove}
+                                onTouchMove={handleMove}
                                 onTouchEnd={handleMouseUp}
                             >
                                 {viewDates.map((date, dayIdx) => (
