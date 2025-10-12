@@ -243,7 +243,11 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                 onTouchEnd={handleMouseUp}
                             >
                                 {viewDates.map((date, dayIdx) => (
-                                    <div key={dayIdx} className="flex-1 border-r relative">
+                                    <div
+                                        key={dayIdx}
+                                        className="flex-1 border-r relative"
+                                        title="Click to add a new event"
+                                    >
                                         {hours.map((hour) => (
                                             <div
                                                 key={hour}
