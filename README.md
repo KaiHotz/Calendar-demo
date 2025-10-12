@@ -4,8 +4,12 @@
 Click [here](https://kaihotz.github.io/Calendar-demo/).
 - **To add an event:** Click on the desired time slot and a dummy event will be added
 - **To delete an event:** Hover any event and click the red trash icon
+
+#### Draging & Resizing events (Desktop only)
 - **Resize and event:** Locate the resize icon at the bottom aof an event adn resize to the desired size.
 - **To move an event:** Hover any event and drag and drop it to the desired position
+
+**Note** Since draging and resizing on mobile devices produces a unpleasant user UX, it was not implemented.
 
 ## Getting Started
 
