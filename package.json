@@ -1,8 +1,11 @@
 {
-  "name": "callendar",
+  "name": "calendar",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "repository": "https://github.com/KaiHotz/Calendar-demo",
+  "homepage": "https://KaiHotz.github.io/Calendar-demo",
+  "author": "Kai Hotz",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,6 +13,7 @@
     "eslint:fix": "eslint . --fix",
     "eslint": "eslint . --report-unused-disable-directives",
     "test": "vitest",
+    "deploy": "npm run build && gh-pages -d dist",
     "preview": "vite preview"
   },
   "dependencies": {
