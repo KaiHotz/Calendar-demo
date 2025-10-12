@@ -1,4 +1,4 @@
-import { type Dispatch, type FC, type SetStateAction, useMemo, useState } from 'react';
+import { type Dispatch, type FC, type SetStateAction, useCallback, useMemo, useState } from 'react';
 import {
     addDays,
     addMonths,
@@ -50,54 +50,66 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
         }
     }, [currentDate, view]);
 
-    const navigate = (direction: number): void => {
-        switch (view) {
-            case EViewType.DAY:
-                setCurrentDate(addDays(currentDate, direction));
-                break;
-            case EViewType.WEEK:
-                setCurrentDate(addWeeks(currentDate, direction));
-                break;
-            case EViewType.MONTH:
-                setCurrentDate(addMonths(currentDate, direction));
-                break;
-            default:
-                setCurrentDate(addMonths(currentDate, direction));
-        }
-    };
+    const handleNavigate = useCallback(
+        (direction: number): void => {
+            switch (view) {
+                case EViewType.DAY:
+                    setCurrentDate(addDays(currentDate, direction));
+                    break;
+                case EViewType.WEEK:
+                    setCurrentDate(addWeeks(currentDate, direction));
+                    break;
+                case EViewType.MONTH:
+                    setCurrentDate(addMonths(currentDate, direction));
+                    break;
+                default:
+                    setCurrentDate(addMonths(currentDate, direction));
+            }
+        },
+        [currentDate, view],
+    );
 
-    const getEventsForDay = (date: Date): ICalendarEvent[] => {
-        return events.filter((event: ICalendarEvent) => {
-            const eventStart = new Date(event.start);
-            const eventEnd = new Date(event.end);
-            const dayStart = startOfDay(date);
-            const dayEnd = endOfDay(date);
+    const getEventsForDay = useCallback(
+        (date: Date): ICalendarEvent[] => {
+            return events.filter((event: ICalendarEvent) => {
+                const eventStart = new Date(event.start);
+                const eventEnd = new Date(event.end);
+                const dayStart = startOfDay(date);
+                const dayEnd = endOfDay(date);
 
-            return eventStart < dayEnd && eventEnd > dayStart;
-        });
-    };
+                return eventStart < dayEnd && eventEnd > dayStart;
+            });
+        },
+        [events],
+    );
 
-    const addEvent = (date: Date, hour: number): void => {
-        const start = new Date(date);
-        start.setHours(hour, 0, 0, 0);
-        const end = new Date(start);
-        end.setHours(hour + 1, 0, 0, 0);
+    const handleAddEvent = useCallback(
+        (date: Date, hour: number): void => {
+            const start = new Date(date);
+            start.setHours(hour, 0, 0, 0);
+            const end = new Date(start);
+            end.setHours(hour + 1, 0, 0, 0);
 
-        const newEvent: ICalendarEvent = {
-            id: new Date().getTime().toString(),
-            title: 'New Event',
-            start: start.toISOString(),
-            end: end.toISOString(),
-            color: '#60a5fa',
-        };
+            const newEvent: ICalendarEvent = {
+                id: new Date().getTime().toString(),
+                title: 'New Event',
+                start: start.toISOString(),
+                end: end.toISOString(),
+                color: '#60a5fa',
+            };
 
-        onEventsChange((prevEvents) => [...prevEvents, newEvent]);
-    };
+            onEventsChange((prevEvents) => [...prevEvents, newEvent]);
+        },
+        [onEventsChange],
+    );
 
-    const deleteEvent = (eventId: string): void => {
-        const filteredEvents = events.filter((e) => e.id !== eventId);
-        onEventsChange(filteredEvents);
-    };
+    const handleDeleteEvent = useCallback(
+        (eventId: string): void => {
+            const filteredEvents = events.filter((e) => e.id !== eventId);
+            onEventsChange(filteredEvents);
+        },
+        [events, onEventsChange],
+    );
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
         if (!draggedEvent && !resizingEvent) return;
@@ -146,13 +158,13 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
         }
     };
 
-    const handleMouseUp = (): void => {
+    const handleMouseUp = useCallback((): void => {
         if (draggedEvent || resizingEvent) {
             onEventsChange?.(events);
         }
         setDraggedEvent(null);
         setResizingEvent(null);
-    };
+    }, [draggedEvent, resizingEvent, events, onEventsChange]);
 
     return (
         <div className="flex flex-col h-screen bg-gray-50">
@@ -166,7 +178,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                 }
                 view={view}
                 onChangeView={setView}
-                navigate={navigate}
+                navigate={handleNavigate}
                 onClickToday={setCurrentDate}
             />
 
@@ -215,7 +227,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                             <div
                                                 key={hour}
                                                 className="h-16 border-b cursor-pointer hover:bg-teal-500/10"
-                                                onClick={() => addEvent(date, hour)}
+                                                onClick={() => handleAddEvent(date, hour)}
                                             />
                                         ))}
                                         {(() => {
@@ -227,7 +239,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                                     key={layout.event.id}
                                                     event={layout.event}
                                                     dayDate={date}
-                                                    onDelete={deleteEvent}
+                                                    onDelete={handleDeleteEvent}
                                                     onResize={setResizingEvent}
                                                     onDrag={setDraggedEvent}
                                                     column={layout.column}
