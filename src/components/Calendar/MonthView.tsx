@@ -1,5 +1,5 @@
 import { type FC, useMemo } from 'react';
-import { format, isSameDay } from 'date-fns';
+import { format, isSameDay, isToday } from 'date-fns';
 
 import type { ICalendarEvent } from './types';
 import { EViewType } from './types';
@@ -58,7 +58,9 @@ export const MonthView: FC<IMonthviewProps> = ({
                                             !isCurrentMonth ? 'text-gray-400' : 'text-gray-700'
                                         }`}
                                     >
-                                        {format(day, 'd')}
+                                        <span className={isToday(day) ? 'text-white rounded-full bg-red-500 p-1' : ''}>
+                                            {format(day, 'd')}
+                                        </span>
                                     </div>
                                     <div className="space-y-0.5 md:space-y-1">
                                         {dayEvents.slice(0, 2).map((event) => (
