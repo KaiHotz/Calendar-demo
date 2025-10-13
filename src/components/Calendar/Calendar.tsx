@@ -8,6 +8,7 @@ import {
     eachDayOfInterval,
     endOfDay,
     endOfMonth,
+    endOfWeek,
     format,
     startOfDay,
     startOfMonth,
@@ -53,7 +54,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
             const start = startOfMonth(currentDate);
             const end = endOfMonth(currentDate);
             const firstDay = startOfWeek(start);
-            const lastDay = addDays(end, 6 - end.getDay());
+            const lastDay = endOfWeek(end);
 
             return eachDayOfInterval({ start: firstDay, end: lastDay });
         }
