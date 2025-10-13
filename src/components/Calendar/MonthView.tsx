@@ -1,5 +1,5 @@
 import { type FC, useMemo } from 'react';
-import { format, isSameDay, isToday } from 'date-fns';
+import { format, isToday } from 'date-fns';
 
 import type { ICalendarEvent } from './types';
 import { EViewType } from './types';
@@ -43,6 +43,7 @@ export const MonthView: FC<IMonthviewProps> = ({
                 {weeks.map((week, weekIdx) => (
                     <div key={weekIdx} className="grid grid-cols-7">
                         {week.map((day, dayIdx) => {
+                            const isTodayFlag = isToday(day);
                             const dayEvents = getEventsForDay(day);
                             const isCurrentMonth = day.getMonth() === currentDate.getMonth();
 
@@ -51,14 +52,14 @@ export const MonthView: FC<IMonthviewProps> = ({
                                     key={dayIdx}
                                     className={`min-h-20 md:min-h-32 border-r border-b p-1 md:p-2 ${
                                         !isCurrentMonth ? 'bg-gray-50' : ''
-                                    } ${isSameDay(day, new Date()) ? 'bg-blue-50' : ''}`}
+                                    } ${isTodayFlag ? 'bg-blue-50' : ''}`}
                                 >
                                     <div
                                         className={`text-xs md:text-sm font-semibold mb-1 ${
                                             !isCurrentMonth ? 'text-gray-400' : 'text-gray-700'
                                         }`}
                                     >
-                                        <span className={isToday(day) ? 'text-white rounded-full bg-red-500 p-1' : ''}>
+                                        <span className={isTodayFlag ? 'text-white rounded-full bg-red-500 p-1' : ''}>
                                             {format(day, 'd')}
                                         </span>
                                     </div>
