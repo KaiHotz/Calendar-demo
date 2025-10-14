@@ -10,6 +10,7 @@ import {
     endOfMonth,
     endOfWeek,
     format,
+    isToday,
     startOfDay,
     startOfMonth,
     startOfWeek,
@@ -196,7 +197,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                 onClickToday={setCurrentDate}
             />
 
-            {view === 'month' ? (
+            {view === EViewType.MONTH ? (
                 <MonthView
                     currentDate={currentDate}
                     viewDates={viewDates}
@@ -241,38 +242,42 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                 onMouseUp={handleMouseUp}
                                 onMouseLeave={handleMouseUp}
                             >
-                                {viewDates.map((date, dayIdx) => (
-                                    <div
-                                        key={dayIdx}
-                                        className="flex-1 border-r relative"
-                                        title="Click to add a new event"
-                                    >
-                                        {hours.map((hour) => (
-                                            <div
-                                                key={hour}
-                                                className="h-12 md:h-16 border-b cursor-pointer hover:bg-teal-500/10"
-                                                onClick={() => handleAddEvent(date, hour)}
-                                            />
-                                        ))}
-                                        {(() => {
-                                            const dayEvents = getEventsForDay(date);
-                                            const eventLayouts = calculateEventLayout(dayEvents);
+                                {viewDates.map((date, dayIdx) => {
+                                    const isTodayFlag = isToday(date) && view === EViewType.WEEK;
 
-                                            return eventLayouts.map((layout) => (
-                                                <CalendarEvent
-                                                    key={layout.event.id}
-                                                    event={layout.event}
-                                                    dayDate={date}
-                                                    onDelete={handleDeleteEvent}
-                                                    onResize={setResizingEvent}
-                                                    onDrag={setDraggedEvent}
-                                                    column={layout.column}
-                                                    totalColumns={layout.totalColumns}
+                                    return (
+                                        <div
+                                            key={dayIdx}
+                                            className={`flex-1 border-r relative ${isTodayFlag ? 'bg-blue-50' : ''} `}
+                                            title="Click to add a new event"
+                                        >
+                                            {hours.map((hour) => (
+                                                <div
+                                                    key={hour}
+                                                    className="h-12 md:h-16 border-b cursor-pointer hover:bg-teal-500/10"
+                                                    onClick={() => handleAddEvent(date, hour)}
                                                 />
-                                            ));
-                                        })()}
-                                    </div>
-                                ))}
+                                            ))}
+                                            {(() => {
+                                                const dayEvents = getEventsForDay(date);
+                                                const eventLayouts = calculateEventLayout(dayEvents);
+
+                                                return eventLayouts.map((layout) => (
+                                                    <CalendarEvent
+                                                        key={layout.event.id}
+                                                        event={layout.event}
+                                                        dayDate={date}
+                                                        onDelete={handleDeleteEvent}
+                                                        onResize={setResizingEvent}
+                                                        onDrag={setDraggedEvent}
+                                                        column={layout.column}
+                                                        totalColumns={layout.totalColumns}
+                                                    />
+                                                ));
+                                            })()}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
