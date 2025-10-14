@@ -21,19 +21,12 @@ export const calculateEventLayout = (events: ICalendarEvent[]): IEventLayout[] =
         return [];
     }
 
-    // Sort events by start time, then by duration (longer events first)
+    // Sort events by start time only
     const sortedEvents = [...events].sort((a, b) => {
         const startA = new Date(a.start).getTime();
         const startB = new Date(b.start).getTime();
-        if (startA !== startB) {
-            return startA - startB;
-        }
 
-        // If start times are the same, longer events go first
-        const durationA = new Date(a.end).getTime() - startA;
-        const durationB = new Date(b.end).getTime() - startB;
-
-        return durationB - durationA;
+        return startA - startB;
     });
 
     const layout: IEventLayout[] = [];

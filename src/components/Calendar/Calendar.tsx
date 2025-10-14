@@ -106,7 +106,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
 
             const newEvent: ICalendarEvent = {
                 id: new Date().getTime().toString(),
-                title: 'New Event',
+                title: `New Event ${events.length + 1} `,
                 start: start.toISOString(),
                 end: end.toISOString(),
                 color: '#60a5fa',
@@ -114,7 +114,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
 
             onEventsChange((prevEvents) => [...prevEvents, newEvent]);
         },
-        [onEventsChange],
+        [events.length, onEventsChange],
     );
 
     const handleDeleteEvent = useCallback(

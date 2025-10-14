@@ -156,14 +156,14 @@ describe('Calendar Utils', () => {
 
             expect(result).toHaveLength(2);
 
-            // Find the longer event (should be processed first)
-            const longerEvent = result.find((item) => item.event.id === '1');
-            const shorterEvent = result.find((item) => item.event.id === '2');
+            // Both events should be properly laid out in separate columns
+            const longEvent = result.find((item) => item.event.id === '1');
+            const shortEvent = result.find((item) => item.event.id === '2');
 
-            expect(longerEvent).toBeDefined();
-            expect(shorterEvent).toBeDefined();
-            expect(longerEvent!.totalColumns).toBe(2);
-            expect(shorterEvent!.totalColumns).toBe(2);
+            expect(longEvent).toBeDefined();
+            expect(shortEvent).toBeDefined();
+            expect(longEvent!.totalColumns).toBe(2);
+            expect(shortEvent!.totalColumns).toBe(2);
         });
 
         it('should handle complex overlapping scenario', () => {

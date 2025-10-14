@@ -71,7 +71,7 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
                 left: `${left}%`,
                 width: `${width}%`,
                 backgroundColor: event.color,
-                zIndex: 10 + column, // Ensure proper stacking of overlapping events
+                zIndex: 10, // Ensure proper stacking of overlapping events
             }}
             onMouseDown={handleDrag}
         >
@@ -90,16 +90,11 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
             </button>
             {(!isMultiDay || isLastDay) && (
                 <div
-                    className="absolute bottom-0 flex justify-center h-3 md:h-4 cursor-ns-resize hover:bg-gray-400/80 bg-gray-500/20"
-                    style={{
-                        left: '2px',
-                        right: '2px', // Give some margin to prevent overlap with adjacent events
-                    }}
+                    className="absolute bottom-0 left-0 right-0 flex justify-center h-1.5 md:h-2 cursor-ns-resize hover:bg-gray-400/80 "
                     onMouseDown={handleResize}
                     onTouchStart={handleResize}
-                    title={`Resize ${event.title}`}
                 >
-                    <StretchHorizontal size={10} className="md:w-4 md:h-4 opacity-70" />
+                    <StretchHorizontal size={6} className="md:w-2 md:h-2" />
                 </div>
             )}
         </div>
