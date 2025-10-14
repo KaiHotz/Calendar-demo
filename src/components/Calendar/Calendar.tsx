@@ -244,12 +244,16 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                             >
                                 {viewDates.map((date, dayIdx) => {
                                     const isWeekView = view === EViewType.WEEK;
-                                    const isTodayFlag = isToday(date) && isWeekView;
+                                    const isTodayFlag = isToday(date);
+                                    const dayEvents = getEventsForDay(date);
+                                    const eventLayouts = calculateEventLayout(dayEvents);
 
                                     return (
                                         <div
                                             key={dayIdx}
-                                            className={cn('flex-1 border-r relative', { 'bg-blue-50': isTodayFlag })}
+                                            className={cn('flex-1 border-r relative', {
+                                                'bg-blue-50': isTodayFlag && isWeekView,
+                                            })}
                                             title="Click to add a new event"
                                         >
                                             {hours.map((hour) => (
@@ -259,24 +263,19 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                                     onClick={() => handleAddEvent(date, hour)}
                                                 />
                                             ))}
-                                            {(() => {
-                                                const dayEvents = getEventsForDay(date);
-                                                const eventLayouts = calculateEventLayout(dayEvents);
-
-                                                return eventLayouts.map((layout) => (
-                                                    <CalendarEvent
-                                                        key={layout.event.id}
-                                                        event={layout.event}
-                                                        dayDate={date}
-                                                        onDelete={handleDeleteEvent}
-                                                        onResize={setResizingEvent}
-                                                        onDrag={setDraggedEvent}
-                                                        column={layout.column}
-                                                        totalColumns={layout.totalColumns}
-                                                    />
-                                                ));
-                                            })()}
-                                            <TimeLine date={date} showLabel={isWeekView} />
+                                            {eventLayouts.map((layout) => (
+                                                <CalendarEvent
+                                                    key={layout.event.id}
+                                                    event={layout.event}
+                                                    dayDate={date}
+                                                    onDelete={handleDeleteEvent}
+                                                    onResize={setResizingEvent}
+                                                    onDrag={setDraggedEvent}
+                                                    column={layout.column}
+                                                    totalColumns={layout.totalColumns}
+                                                />
+                                            ))}
+                                            <TimeLine date={date} hasLabel={isWeekView} />
                                         </div>
                                     );
                                 })}

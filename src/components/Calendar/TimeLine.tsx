@@ -5,10 +5,10 @@ import { format, isToday } from 'date-fns';
 interface LiveTimeLineProps {
     date: Date;
     isVisible?: boolean;
-    showLabel?: boolean;
+    hasLabel?: boolean;
 }
 
-export const TimeLine: FC<LiveTimeLineProps> = ({ date, isVisible = true, showLabel }) => {
+export const TimeLine: FC<LiveTimeLineProps> = ({ date, isVisible = true, hasLabel }) => {
     const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
     useEffect(() => {
@@ -47,7 +47,7 @@ export const TimeLine: FC<LiveTimeLineProps> = ({ date, isVisible = true, showLa
                 <div className="absolute -left-2 -top-1.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm" />
 
                 {/* Time label */}
-                <Activity mode={showLabel ? 'visible' : 'hidden'}>
+                <Activity mode={hasLabel ? 'visible' : 'hidden'}>
                     <div className="absolute -left-14 -top-2.5 text-xs font-medium text-red-500 bg-white px-1 py-0.5 rounded shadow-sm border">
                         {format(currentTime, 'HH:mm')}
                     </div>
