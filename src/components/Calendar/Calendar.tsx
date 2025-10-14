@@ -20,6 +20,7 @@ import { cn } from '@/utils';
 
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarEvent } from './CalendarEvent';
+import { TimeLine } from './TimeLine';
 import { MonthView } from './MonthView';
 import type { ICalendarEvent, IDraggedEventState, IResizingEventState } from './types';
 import { EViewType } from './types';
@@ -245,7 +246,8 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                 onMouseLeave={handleMouseUp}
                             >
                                 {viewDates.map((date, dayIdx) => {
-                                    const isTodayFlag = isToday(date) && view === EViewType.WEEK;
+                                    const isWeekView = view === EViewType.WEEK;
+                                    const isTodayFlag = isToday(date) && isWeekView;
 
                                     return (
                                         <div
@@ -277,6 +279,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                                     />
                                                 ));
                                             })()}
+                                            <TimeLine date={date} showLabel={isWeekView} />
                                         </div>
                                     );
                                 })}
