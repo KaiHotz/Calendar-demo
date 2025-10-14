@@ -19,8 +19,8 @@ export const TimeLine: FC<LiveTimeLineProps> = ({ date, isVisible = true, showLa
         // Update immediately
         updateTime();
 
-        // Update every minute
-        const interval = setInterval(updateTime, 60000);
+        // Update every 10 seconds for more responsive updates
+        const interval = setInterval(updateTime, 10000);
 
         return () => clearInterval(interval);
     }, []);
