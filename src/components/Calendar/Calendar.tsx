@@ -210,14 +210,11 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                 />
             ) : (
                 <div className="flex-1 overflow-hidden flex flex-col">
-                    <div className="bg-white border-b">
+                    <div className="bg-teal-600 border-b">
                         <div className="flex">
                             <div className="w-16 md:w-20 flex-shrink-0" />
                             {viewDates.map((date, idx) => (
-                                <div
-                                    key={idx}
-                                    className="flex-1 text-center py-2 md:py-3 border-l text-white bg-teal-500"
-                                >
+                                <div key={idx} className="flex-1 text-center py-2 md:py-3 border-l text-white">
                                     <div className="text-xs font-medium">{format(date, 'EEE')}</div>
                                     <div className="text-xs md:text-sm font-semibold">{format(date, 'dd.MM')}</div>
                                 </div>
