@@ -21,24 +21,16 @@ export const calculateEventLayout = (events: ICalendarEvent[]): IEventLayout[] =
         return [];
     }
 
-    // Sort events by start time only
-    const sortedEvents = [...events].sort((a, b) => {
-        const startA = new Date(a.start).getTime();
-        const startB = new Date(b.start).getTime();
-
-        return startA - startB;
-    });
-
     const layout: IEventLayout[] = [];
     const processedEvents = new Set<string>();
 
     // Process each event and find its overlapping group
-    for (const event of sortedEvents) {
+    for (const event of events) {
         if (processedEvents.has(event.id)) continue;
 
         // Find all events that overlap with this event
         const overlappingGroup = [event];
-        for (const otherEvent of sortedEvents) {
+        for (const otherEvent of events) {
             if (otherEvent.id !== event.id && !processedEvents.has(otherEvent.id)) {
                 // Check if otherEvent overlaps with any event in the current group
                 const overlapsWithGroup = overlappingGroup.some((groupEvent) => eventsOverlap(groupEvent, otherEvent));
