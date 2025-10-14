@@ -19,7 +19,7 @@ export const CalendarHeader: FC<ICalendarHeaderProps> = ({ onChangeView, view, t
             <div className="flex items-center gap-1 w-full md:w-1/3 justify-center md:justify-start order-2 md:order-1">
                 <h1 className="text-lg md:text-xl font-bold text-gray-800 truncate">{title}</h1>
             </div>
-            <div className="flex gap-1 md:gap-2 w-full md:w-1/3 justify-center order-1 md:order-2">
+            <div className="flex gap-1 md:gap-2 w-full md:w-1/3 justify-center order-1 md:order-2 pl-16 portrait:pl-0 md:pl-20">
                 <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded">
                     <ChevronLeft size={20} />
                 </button>
