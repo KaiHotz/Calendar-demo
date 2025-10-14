@@ -1,6 +1,8 @@
 import type { FC } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+import { cn } from '@/utils';
+
 import { EViewType } from './types';
 
 interface ICalendarHeaderProps {
@@ -34,21 +36,27 @@ export const CalendarHeader: FC<ICalendarHeaderProps> = ({ onChangeView, view, t
             <div className="flex gap-1 md:gap-2 w-full md:w-1/3 justify-center md:justify-end order-3">
                 <button
                     onClick={() => onChangeView(EViewType.DAY)}
-                    className={`px-2 md:px-4 py-2 rounded text-sm ${view === EViewType.DAY ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+                    className={cn(`px-2 md:px-4 py-2 rounded text-sm bg-gray-200`, {
+                        'bg-teal-600 text-white': view === EViewType.DAY,
+                    })}
                 >
                     <span className="hidden sm:inline">Day</span>
                     <span className="sm:hidden">D</span>
                 </button>
                 <button
                     onClick={() => onChangeView(EViewType.WEEK)}
-                    className={`px-2 md:px-4 py-2 rounded text-sm ${view === EViewType.WEEK ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+                    className={cn(`px-2 md:px-4 py-2 rounded text-sm bg-gray-200`, {
+                        'bg-teal-600 text-white': view === EViewType.WEEK,
+                    })}
                 >
                     <span className="hidden sm:inline">Week</span>
                     <span className="sm:hidden">W</span>
                 </button>
                 <button
                     onClick={() => onChangeView(EViewType.MONTH)}
-                    className={`px-2 md:px-4 py-2 rounded text-sm ${view === EViewType.MONTH ? 'bg-teal-600 text-white' : 'bg-gray-200'}`}
+                    className={cn(`px-2 md:px-4 py-2 rounded text-sm bg-gray-200`, {
+                        'bg-teal-600 text-white': view === EViewType.MONTH,
+                    })}
                 >
                     <span className="hidden sm:inline">Month</span>
                     <span className="sm:hidden">M</span>

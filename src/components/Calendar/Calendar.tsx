@@ -16,6 +16,8 @@ import {
     startOfWeek,
 } from 'date-fns';
 
+import { cn } from '@/utils';
+
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarEvent } from './CalendarEvent';
 import { MonthView } from './MonthView';
@@ -248,7 +250,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                     return (
                                         <div
                                             key={dayIdx}
-                                            className={`flex-1 border-r relative ${isTodayFlag ? 'bg-blue-50' : ''} `}
+                                            className={cn('flex-1 border-r relative', { 'bg-blue-50': isTodayFlag })}
                                             title="Click to add a new event"
                                         >
                                             {hours.map((hour) => (

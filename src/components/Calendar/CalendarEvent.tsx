@@ -64,15 +64,13 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
 
     return (
         <div
-            className="absolute rounded px-1 md:px-2 py-1 text-xs text-white overflow-hidden cursor-move group opacity-90"
+            className="absolute rounded px-1 md:px-2 py-1 text-xs text-white overflow-hidden cursor-move group opacity-90 min-h-4 z-10"
             style={{
                 top: `${top}%`,
                 height: `${height}%`,
                 left: `${left}%`,
                 width: `${width}%`,
                 backgroundColor: event.color,
-                minHeight: '16px',
-                zIndex: 10,
             }}
             onMouseDown={handleDrag}
         >

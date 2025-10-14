@@ -1,6 +1,8 @@
 import { type FC, useMemo } from 'react';
 import { format, isToday } from 'date-fns';
 
+import { cn } from '@/utils';
+
 import type { ICalendarEvent } from './types';
 import { EViewType } from './types';
 
@@ -50,14 +52,15 @@ export const MonthView: FC<IMonthviewProps> = ({
                             return (
                                 <div
                                     key={dayIdx}
-                                    className={`min-h-20 md:min-h-32 border-r border-b p-1 md:p-2 ${
-                                        !isCurrentMonth ? 'bg-gray-50' : ''
-                                    } ${isTodayFlag ? 'bg-blue-50' : ''}`}
+                                    className={cn('min-h-20 md:min-h-32 border-r border-b p-1 md:p-2', {
+                                        'bg-gray-50': !isCurrentMonth,
+                                        'bg-blue-50': isTodayFlag,
+                                    })}
                                 >
                                     <div
-                                        className={`text-xs md:text-sm font-semibold mb-1 ${
-                                            !isCurrentMonth ? 'text-gray-400' : 'text-gray-700'
-                                        }`}
+                                        className={cn('text-xs md:text-sm font-semibold mb-1 text-gray-700', {
+                                            'text-gray-400': !isCurrentMonth,
+                                        })}
                                     >
                                         <span className={isTodayFlag ? 'text-white rounded-full bg-red-500 p-1' : ''}>
                                             {format(day, 'd')}
