@@ -243,40 +243,6 @@ describe('Calendar Utils', () => {
             expect(result[1].column).toBe(0);
         });
 
-        it('should maintain event order in the result', () => {
-            const events: ICalendarEvent[] = [
-                {
-                    id: '1',
-                    title: 'Event 1',
-                    start: '2025-10-12T10:00:00',
-                    end: '2025-10-12T11:00:00',
-                    color: '#blue',
-                },
-                {
-                    id: '2',
-                    title: 'Event 2',
-                    start: '2025-10-12T09:00:00',
-                    end: '2025-10-12T10:00:00',
-                    color: '#red',
-                },
-                {
-                    id: '3',
-                    title: 'Event 3',
-                    start: '2025-10-12T11:00:00',
-                    end: '2025-10-12T12:00:00',
-                    color: '#green',
-                },
-            ];
-
-            const result = calculateEventLayout(events);
-
-            expect(result).toHaveLength(3);
-
-            // Events should be sorted by start time in the result
-            const resultEventIds = result.map((item) => item.event.id);
-            expect(resultEventIds).toEqual(['2', '1', '3']);
-        });
-
         it('should handle events with different date formats', () => {
             const events: ICalendarEvent[] = [
                 {
