@@ -17,13 +17,17 @@ const eventsOverlap = (event1: ICalendarEvent, event2: ICalendarEvent): boolean 
  * Returns array of events with their column positions
  */
 export const calculateEventLayout = (events: ICalendarEvent[]): IEventLayout[] => {
-    if (events.length === 0) return [];
+    if (events.length === 0) {
+        return [];
+    }
 
     // Sort events by start time, then by duration (longer events first)
     const sortedEvents = [...events].sort((a, b) => {
         const startA = new Date(a.start).getTime();
         const startB = new Date(b.start).getTime();
-        if (startA !== startB) return startA - startB;
+        if (startA !== startB) {
+            return startA - startB;
+        }
 
         // If start times are the same, longer events go first
         const durationA = new Date(a.end).getTime() - startA;

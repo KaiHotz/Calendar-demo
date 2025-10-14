@@ -127,7 +127,9 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
 
     const handleMove = useCallback(
         (e: MouseEvent<HTMLDivElement>): void => {
-            if (!draggedEvent && !resizingEvent) return;
+            if (!draggedEvent && !resizingEvent) {
+                return;
+            }
 
             const target = e.currentTarget;
             const rect = target.getBoundingClientRect();
@@ -144,7 +146,9 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                 const duration = differenceInMinutes(end, start);
 
                 const targetDate = viewDates[Math.floor((clientX - rect.left) / (rect.width / viewDates.length))];
-                if (!targetDate) return;
+                if (!targetDate) {
+                    return;
+                }
 
                 const newStart = new Date(targetDate);
                 newStart.setHours(Math.max(0, Math.min(23, newHour)), minutes, 0, 0);
@@ -159,7 +163,9 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
             if (resizingEvent) {
                 const event = resizingEvent.event;
                 const targetDate = viewDates[Math.floor((clientX - rect.left) / (rect.width / viewDates.length))];
-                if (!targetDate) return;
+                if (!targetDate) {
+                    return;
+                }
 
                 const newEnd = new Date(targetDate);
                 newEnd.setHours(Math.max(0, Math.min(23, newHour)), Math.min(59, minutes + 30), 0, 0);
