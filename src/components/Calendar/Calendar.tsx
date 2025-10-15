@@ -44,13 +44,16 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const [resizingEvent, setResizingEvent] = useState<IResizingEventState | null>(null);
     const [draggedEvent, setDraggedEvent] = useState<IDraggedEventState | null>(null);
+    const isMonthView = view === EViewType.MONTH;
+    const isWeekView = view === EViewType.WEEK;
+    const isDayView = view === EViewType.DAY;
 
     const hours: number[] = Array.from({ length: 24 }, (_, i) => i);
 
     const viewDates = useMemo<Date[]>(() => {
-        if (view === EViewType.DAY) {
+        if (isDayView) {
             return [currentDate];
-        } else if (view === EViewType.WEEK) {
+        } else if (isWeekView) {
             const start = startOfWeek(currentDate);
 
             return Array.from({ length: 7 }, (_, i) => addDays(start, i));
@@ -62,7 +65,7 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
 
             return eachDayOfInterval({ start: firstDay, end: lastDay });
         }
-    }, [currentDate, view]);
+    }, [currentDate, isDayView, isWeekView]);
 
     const handleNavigate = useCallback(
         (direction: number): void => {
@@ -190,23 +193,23 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
         setResizingEvent(null);
     }, [draggedEvent, resizingEvent, events, onEventsChange]);
 
+    const calendarTitle = isDayView
+        ? format(currentDate, 'EEEE, MMMM d, yyyy')
+        : isMonthView
+          ? format(currentDate, 'MMMM yyyy')
+          : `${format(viewDates[0], 'MMM d')} - ${format(viewDates[6], 'MMM d, yyyy')}`;
+
     return (
         <div className="flex flex-col h-screen bg-gray-50">
             <CalendarHeader
-                title={
-                    view === EViewType.DAY
-                        ? format(currentDate, 'EEEE, MMMM d, yyyy')
-                        : view === EViewType.MONTH
-                          ? format(currentDate, 'MMMM yyyy')
-                          : `${format(viewDates[0], 'MMM d')} - ${format(viewDates[6], 'MMM d, yyyy')}`
-                }
+                title={calendarTitle}
                 view={view}
                 onChangeView={setView}
                 navigate={handleNavigate}
                 onClickToday={setCurrentDate}
             />
 
-            {view === EViewType.MONTH ? (
+            {isMonthView ? (
                 <MonthView
                     currentDate={currentDate}
                     viewDates={viewDates}
@@ -220,9 +223,18 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                         <div className="flex">
                             <div className="w-16 md:w-20 flex-shrink-0" />
                             {viewDates.map((date, idx) => (
-                                <div key={idx} className="flex-1 text-center py-2 md:py-3  text-white">
-                                    <div className="text-xs font-medium">{format(date, 'EEE')}</div>
-                                    <div className="text-xs md:text-sm font-semibold">{format(date, 'dd.MM')}</div>
+                                <div
+                                    key={idx}
+                                    className="flex-1 flex flex-col justify-center gap-0.5 items-center text-center py-2 md:py-3 text-white"
+                                >
+                                    <div className="text-xs font-medium ">{format(date, 'EEE')}</div>
+                                    <div
+                                        className={cn('text-xs md:text-sm font-semibold p-0.5', {
+                                            'rounded-4xl bg-red-500 w-11': isWeekView && isToday(date),
+                                        })}
+                                    >
+                                        {format(date, 'dd.MM')}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -249,7 +261,6 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                                 onMouseLeave={handleMouseUp}
                             >
                                 {viewDates.map((date, dayIdx) => {
-                                    const isWeekView = view === EViewType.WEEK;
                                     const isTodayFlag = isToday(date);
                                     const dayEvents = getEventsForDay(date);
                                     const eventLayouts = calculateEventLayout(dayEvents);

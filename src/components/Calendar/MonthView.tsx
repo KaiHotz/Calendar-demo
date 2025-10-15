@@ -65,7 +65,7 @@ export const MonthView: FC<IMonthviewProps> = ({
                                             'text-gray-400': !isCurrentMonth,
                                         })}
                                     >
-                                        <span className={isTodayFlag ? 'text-white rounded-full bg-red-500 p-1' : ''}>
+                                        <span className={cn({ 'text-white rounded-full bg-red-500 p-1': isTodayFlag })}>
                                             {format(day, 'd')}
                                         </span>
                                     </div>
