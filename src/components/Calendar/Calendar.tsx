@@ -225,14 +225,13 @@ export const Calendar: FC<CalendarProps> = ({ events, onEventsChange }) => {
                             {viewDates.map((date, idx) => (
                                 <div
                                     key={idx}
-                                    className="flex-1 flex flex-col justify-center gap-0.5 items-center text-center py-2 md:py-3 text-white"
+                                    className={cn(
+                                        'flex-1 flex flex-col justify-center gap-0.5 items-center text-center py-2 md:py-3 text-white',
+                                        { 'bg-red-500 ': isWeekView && isToday(date) },
+                                    )}
                                 >
                                     <div className="text-xs font-medium ">{format(date, 'EEE')}</div>
-                                    <div
-                                        className={cn('text-xs md:text-sm font-semibold p-0.5', {
-                                            'rounded-4xl bg-red-500 w-11': isWeekView && isToday(date),
-                                        })}
-                                    >
+                                    <div className="text-xs md:text-sm font-semibold p-0.5">
                                         {format(date, 'dd.MM')}
                                     </div>
                                 </div>
