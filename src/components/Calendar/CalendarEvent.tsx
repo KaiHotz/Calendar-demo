@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import type { Dispatch, FC, MouseEvent, SetStateAction, TouchEvent } from 'react';
 import { endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { StretchHorizontal, Trash2 } from 'lucide-react';
@@ -40,8 +40,8 @@ export const CalendarEvent: FC<ICalendarEventProps> = ({
     const height = ((endHour - startHour) / 24) * 100;
 
     // Calculate horizontal positioning for overlapping events
-    const width = totalColumns > 1 ? 100 / totalColumns - 1 : 100 / totalColumns; // Subtract 1% for spacing
-    const left = column * (100 / totalColumns) + (column > 0 ? 0.5 : 0); // Add small offset for spacing
+    const width = useMemo(() => (totalColumns > 1 ? 100 / totalColumns - 0.5 : 100 / totalColumns), [totalColumns]); // Subtract 0.5% for spacing
+    const left = useMemo(() => column * (100 / totalColumns), [column, totalColumns]); // Add small offset for spacing
 
     const isMultiDay = !isSameDay(eventStart, eventEnd);
     const isLastDay = isSameDay(dayDate, eventEnd);
